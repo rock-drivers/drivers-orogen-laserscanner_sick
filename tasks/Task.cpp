@@ -10,6 +10,8 @@ Task::Task(std::string const& name, TaskCore::TaskState initial_state)
 {
     status = 1;
     num_measurements = 0; 
+    resolution = 0.0;
+    start_angle = 0.0;
 }
 
 Task::Task(std::string const& name, RTT::ExecutionEngine* engine, TaskCore::TaskState initial_state)
@@ -18,6 +20,8 @@ Task::Task(std::string const& name, RTT::ExecutionEngine* engine, TaskCore::Task
 {
     status = 1;
     num_measurements = 0;
+    resolution = 0.0;
+    start_angle = 0.0;
 }
 
 Task::~Task()
@@ -45,10 +49,30 @@ bool Task::configureHook()
     try{
 	sick->SetSickScanDataFormat(SickToolbox::SickLMS1xx::SICK_LMS_1XX_SCAN_FORMAT_DIST_DOUBLE_PULSE_REFLECT_16BIT);
     }
-    catch(SickToolbox::SickConfigException sick_exception) {
+    catch(SickToolbox::SickConfigException sick_exception){
 	std::cout << sick_exception.what() << std::endl;
 	return false;
     }
+
+    if(sick->IntToSickScanFreq(_frequency.get()) == SickToolbox::SickLMS1xx::SICK_LMS_1XX_SCAN_FREQ_UNKNOWN)
+	return false;
+    
+    if(sick->DoubleToSickScanRes(_resolution.get()) == SickToolbox::SickLMS1xx::SICK_LMS_1XX_SCAN_RES_UNKNOWN)
+	return false;
+
+    sick->SetSickScanFreqAndRes(sick->IntToSickScanFreq(_frequency.get()), sick->DoubleToSickScanRes(_resolution.get()));
+
+    try{
+	resolution = (sick->SickScanResToDouble(sick->GetSickScanRes()))/180.0*M_PI;
+	//printf("Resolution: %f\n", sick->SickScanResToDouble(sick->GetSickScanRes()));
+	start_angle = -(M_PI*0.5)+((sick->GetSickStartAngle())/180.0*M_PI);
+	//printf("Frequency: %i\n", sick->SickScanFreqToInt(sick->GetSickScanFreq()));
+    }
+    catch(SickToolbox::SickIOException sick_exception) {
+	std::cout << sick_exception.what() << std::endl;
+	return false;
+    }
+
     return true;
 }
 
@@ -65,13 +89,13 @@ void Task::updateHook()
     base::samples::LaserScan scan;
 
     try{
-	sick->GetSickMeasurements(range_1_vals,range_2_vals,range_1_vals,range_2_vals,num_measurements,&status);
+	sick->GetSickMeasurements(range_1_vals,range_2_vals,reflect_1_vals,reflect_2_vals,num_measurements,&status);
 	for(int i=0; i<num_measurements; i++){
 	    scan.ranges.push_back(range_1_vals[i]);
 	    //std::cout << range_1_vals[i] << std::endl;
 	}
 	for(int i=0; i<num_measurements; i++){
-	    scan.remission.push_back(range_2_vals[i]);
+	    scan.remission.push_back(reflect_1_vals[i]);
 	}
     }
     catch(SickToolbox::SickIOException sick_exception) {
@@ -90,11 +114,11 @@ void Task::updateHook()
 	return;
     }
     scan.time = base::Time::now();
-    scan.start_angle = -M_PI;
-    scan.angular_resolution = 0.001;
-    scan.speed = 0.001;
-    scan.minRange = 50; 
-    scan.maxRange = 50000;
+    scan.start_angle = start_angle;
+    scan.angular_resolution = resolution;
+    scan.speed = 50.0*(2.0*M_PI);
+    scan.minRange = 500; 
+    scan.maxRange = 20000;
 
     _scan.write(scan);
 }

@@ -22,6 +22,10 @@ task_context "Task" do
 
    property "port", "int"
 
+   property "resolution", "double", 0.5
+
+   property "frequency", "int", 50
+
    # An input port, i.e. an object from which the component gets data from
    # other components' outputs
    #

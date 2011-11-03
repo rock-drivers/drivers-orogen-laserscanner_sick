@@ -20,6 +20,10 @@ namespace laserscanner_sick {
         unsigned int num_measurements;
         unsigned int range_1_vals[SickToolbox::SickLMS1xx::SICK_LMS_1XX_MAX_NUM_MEASUREMENTS];
         unsigned int range_2_vals[SickToolbox::SickLMS1xx::SICK_LMS_1XX_MAX_NUM_MEASUREMENTS]; 
+        unsigned int reflect_1_vals[SickToolbox::SickLMS1xx::SICK_LMS_1XX_MAX_NUM_MEASUREMENTS];
+        unsigned int reflect_2_vals[SickToolbox::SickLMS1xx::SICK_LMS_1XX_MAX_NUM_MEASUREMENTS];
+	double resolution;
+	double start_angle;
 
     public:
         Task(std::string const& name = "laserscanner_sick::Task", TaskCore::TaskState initial_state = Stopped);

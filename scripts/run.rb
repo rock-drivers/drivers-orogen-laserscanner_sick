@@ -10,6 +10,8 @@ Orocos.run 'laserscanner_sick_test' do
     scanner = Orocos::TaskContext.get 'laserscanner_sick'
     scanner.hostname = "192.168.103.203"
     scanner.port = 2111
+    scanner.resolution = 0.5
+    scanner.frequency = 50
     Orocos.log_all_ports
     scanner.configure
     scanner.start
