@@ -5,6 +5,7 @@
 
 #include "laserscanner_sick/TaskBase.hpp"
 #include <laserscanner_sick/lms1xx/SickLMS1xx.hh>
+#include <rtt/extras/FileDescriptorActivity.hpp>
 
 namespace SickToolbox{
     class SickLMS1xx;
@@ -24,10 +25,11 @@ namespace laserscanner_sick {
         unsigned int reflect_2_vals[SickToolbox::SickLMS1xx::SICK_LMS_1XX_MAX_NUM_MEASUREMENTS];
 	double resolution;
 	double start_angle;
+	RTT::extras::FileDescriptorActivity* activity;
 
     public:
-        Task(std::string const& name = "laserscanner_sick::Task", TaskCore::TaskState initial_state = Stopped);
-        Task(std::string const& name, RTT::ExecutionEngine* engine, TaskCore::TaskState initial_state = Stopped);
+        Task(std::string const& name = "laserscanner_sick::Task");
+        Task(std::string const& name, RTT::ExecutionEngine* engine);
 
 	~Task();
 
@@ -51,7 +53,7 @@ namespace laserscanner_sick {
          * stay in Stopped. Otherwise, it goes into Running and updateHook()
          * will be called.
          */
-        // bool startHook();
+         bool startHook();
 
         /** This hook is called by Orocos when the component is in the Running
          * state, at each activity step. Here, the activity gives the "ticks"

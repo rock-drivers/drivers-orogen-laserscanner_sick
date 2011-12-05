@@ -40,7 +40,8 @@ task_context "Task" do
    # Data can be written using _output.write(value). _output.connected() returns
    # if this output is connected to an input or not.
    output_port "scan", "/base/samples/LaserScan"
-
+   needs_configuration
+   fd_driven
    # If you want that component's updateHook() to be executed when the "input"
    # port gets data, uncomment this
    # port_driven "input"
@@ -53,8 +54,7 @@ deployment "laserscanner_sick_test" do
     do_not_install
 
     # Declares it as periodic, with a period of 100ms
-    task("laserscanner_sick", "Task").
-        periodic(0.1)
+    task("laserscanner_sick", "Task")
 
     add_default_logger
 end

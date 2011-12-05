@@ -4,9 +4,10 @@
 
 using namespace laserscanner_sick;
 
-Task::Task(std::string const& name, TaskCore::TaskState initial_state)
-    : TaskBase(name, initial_state)
+Task::Task(std::string const& name)
+    : TaskBase(name)
     , sick(0)
+    , activity(0)
 {
     status = 1;
     num_measurements = 0; 
@@ -14,9 +15,10 @@ Task::Task(std::string const& name, TaskCore::TaskState initial_state)
     start_angle = 0.0;
 }
 
-Task::Task(std::string const& name, RTT::ExecutionEngine* engine, TaskCore::TaskState initial_state)
-    : TaskBase(name, engine, initial_state)
+Task::Task(std::string const& name, RTT::ExecutionEngine* engine)
+    : TaskBase(name, engine)
     , sick(0)
+    , activity(0)
 {
     status = 1;
     num_measurements = 0;
@@ -72,16 +74,18 @@ bool Task::configureHook()
 	std::cout << sick_exception.what() << std::endl;
 	return false;
     }
+    activity = getActivity<RTT::extras::FileDescriptorActivity>();
 
     return true;
 }
 
-// bool Task::startHook()
-// {
-//     if (! TaskBase::startHook())
-//         return false;
-//     return true;
-// }
+bool Task::startHook()
+{
+    if (! TaskBase::startHook() || !activity)
+	return false;
+    activity->watch(sick->getReadFD());
+    return true;
+}
 
 void Task::updateHook()
 {
