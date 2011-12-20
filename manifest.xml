@@ -13,5 +13,5 @@
   <depend package="dummy-dependency-n-1" />
   <depend package="dummy-dependency-n" />
   -->
-  <depend package="virgo/laserscanner_sick" />
+  <depend package="drivers/laserscanner_sick" />
 </package>
