@@ -9,8 +9,11 @@ name "laserscanner_sick"
 # If the component/deployments use data types that are defined in other oroGen
 # projects, these projects should be imported there as well.
 import_types_from "base"
+import_types_from "aggregator"
 
 using_library "laserscanner_sick"
+using_library "aggregator"
+
 # Declare a new task context (i.e., a component)
 #
 # The corresponding C++ class can be edited in tasks/Task.hpp and
@@ -39,6 +42,8 @@ task_context "Task" do
    #
    # Data can be written using _output.write(value). _output.connected() returns
    # if this output is connected to an input or not.
+   output_port "timestamp_estimator_status", "/aggregator/TimestampEstimatorStatus"
+
    output_port "scan", "/base/samples/LaserScan"
    needs_configuration
    fd_driven

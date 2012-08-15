@@ -13,6 +13,7 @@ Task::Task(std::string const& name)
     num_measurements = 0; 
     resolution = 0.0;
     start_angle = 0.0;
+    timestamp_estimator = 0;
 }
 
 Task::Task(std::string const& name, RTT::ExecutionEngine* engine)
@@ -24,10 +25,12 @@ Task::Task(std::string const& name, RTT::ExecutionEngine* engine)
     num_measurements = 0;
     resolution = 0.0;
     start_angle = 0.0;
+    timestamp_estimator = 0;
 }
 
 Task::~Task()
 {
+    if(timestamp_estimator) delete timestamp_estimator;
 }
 
 /// The following lines are template definitions for the various state machine
@@ -38,7 +41,8 @@ bool Task::configureHook()
 {
     if (! TaskBase::configureHook())
         return false;
-    sick = new SickToolbox::SickLMS1xx(_hostname.get(), _port.get()); 
+    sick = new SickToolbox::SickLMS1xx(_hostname.get(), _port.get());
+    timestamp_estimator = new aggregator::TimestampEstimator(base::Time::fromSeconds(2),base::Time::fromSeconds(0.02),INT_MAX);
 
     try{
 	sick->Initialize();
@@ -91,6 +95,7 @@ void Task::updateHook()
 {
     TaskBase::updateHook();
     base::samples::LaserScan scan;
+    _timestamp_estimator_status.write(timestamp_estimator->getStatus());
 
     try{
 	sick->GetSickMeasurements(range_1_vals,range_2_vals,reflect_1_vals,reflect_2_vals,num_measurements,&status);
@@ -117,7 +122,7 @@ void Task::updateHook()
 	exception();
 	return;
     }
-    scan.time = base::Time::now();
+    scan.time = timestamp_estimator->update(base::Time::now());
     scan.start_angle = start_angle;
     scan.angular_resolution = resolution;
     scan.speed = 50.0*(2.0*M_PI);

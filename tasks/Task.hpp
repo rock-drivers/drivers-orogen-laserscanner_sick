@@ -6,10 +6,16 @@
 #include "laserscanner_sick/TaskBase.hpp"
 #include <laserscanner_sick/lms1xx/SickLMS1xx.hh>
 #include <rtt/extras/FileDescriptorActivity.hpp>
+#include <aggregator/TimestampEstimator.hpp>
 
 namespace SickToolbox{
     class SickLMS1xx;
     }
+
+namespace aggregator{
+    class TimestampEstimator;
+
+};
 
 namespace laserscanner_sick {
     class Task : public TaskBase
@@ -26,6 +32,7 @@ namespace laserscanner_sick {
 	double resolution;
 	double start_angle;
 	RTT::extras::FileDescriptorActivity* activity;
+	aggregator::TimestampEstimator* timestamp_estimator;
 
     public:
         Task(std::string const& name = "laserscanner_sick::Task");
