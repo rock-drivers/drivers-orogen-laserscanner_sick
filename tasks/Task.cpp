@@ -30,7 +30,7 @@ Task::Task(std::string const& name, RTT::ExecutionEngine* engine)
 
 Task::~Task()
 {
-    if(timestamp_estimator) delete timestamp_estimator;
+    delete timestamp_estimator;
 }
 
 /// The following lines are template definitions for the various state machine
