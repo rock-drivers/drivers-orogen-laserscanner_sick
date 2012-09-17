@@ -15,4 +15,5 @@
   -->
   <depend package="drivers/laserscanner_sick" />
   <depend package="drivers/orogen/aggregator" />
+  <depend package="drivers/orogen/iodrivers_base" />
 </package>

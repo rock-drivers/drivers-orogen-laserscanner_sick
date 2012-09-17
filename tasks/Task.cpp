@@ -129,6 +129,7 @@ void Task::updateHook()
     scan.minRange = 500; 
     scan.maxRange = 20000;
 
+    _io_status.write(sick->getBufferMonitorStatus());
     _scan.write(scan);
 }
 

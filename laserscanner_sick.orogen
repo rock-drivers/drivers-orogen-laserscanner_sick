@@ -10,6 +10,7 @@ name "laserscanner_sick"
 # projects, these projects should be imported there as well.
 import_types_from "base"
 import_types_from "aggregator"
+import_types_from "iodrivers_base"
 
 using_library "laserscanner_sick"
 using_library "aggregator"
@@ -28,6 +29,9 @@ task_context "Task" do
    property "resolution", "double", 0.5
 
    property "frequency", "int", 50
+
+   output_port("io_status", "iodrivers_base/Status").
+        doc "statistics and status about the I/O channel"
 
    # An input port, i.e. an object from which the component gets data from
    # other components' outputs
