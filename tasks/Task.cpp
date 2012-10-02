@@ -99,11 +99,11 @@ void Task::updateHook()
 
     try{
 	sick->GetSickMeasurements(range_1_vals,range_2_vals,reflect_1_vals,reflect_2_vals,num_measurements,&status);
-	for(int i=0; i<num_measurements; i++){
+	for(unsigned int i=0; i<num_measurements; i++){
 	    scan.ranges.push_back(range_1_vals[i]);
 	    //std::cout << range_1_vals[i] << std::endl;
 	}
-	for(int i=0; i<num_measurements; i++){
+	for(unsigned int i=0; i<num_measurements; i++){
 	    scan.remission.push_back(reflect_1_vals[i]);
 	}
     }
