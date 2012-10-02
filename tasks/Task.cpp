@@ -3,6 +3,7 @@
 #include "Task.hpp"
 
 using namespace laserscanner_sick;
+using namespace std;
 
 Task::Task(std::string const& name)
     : TaskBase(name)
