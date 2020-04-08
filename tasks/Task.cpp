@@ -49,7 +49,7 @@ bool Task::configureHook()
 	sick->Initialize();
     }
     catch(...){
-	cerr << cerr << "Initialize failed! Are you using the correct IP address?" << endl;
+    cerr << "Initialize failed! Are you using the correct IP address?" << endl;
 	return false;
     }
 
